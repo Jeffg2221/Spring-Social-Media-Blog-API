@@ -11,6 +11,8 @@ import com.example.entity.Message;
 public interface MessageRepository extends JpaRepository<Message, Integer>{
 
     List<Message> findByPostedBy(Integer userId);
+    
+    
 
     
 }

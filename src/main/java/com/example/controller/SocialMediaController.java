@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -86,17 +87,26 @@ public class SocialMediaController {
                  .map(ResponseEntity::ok)
                  .orElse(ResponseEntity.notFound().build());
      }
- 
-     // Endpoint for deleting a message by its ID
-    @DeleteMapping("/messages/{message_id}")
-    public ResponseEntity<Void> deleteMessageById(@PathVariable("message_id") Integer messageId) {
-        try {
-            messageService.deleteById(messageId);
-            return ResponseEntity.ok().build();
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatus()).build();
+       // Endpoint for deleting a message by its ID
+        @DeleteMapping("/messages/{message_id}")
+        public ResponseEntity<String> deleteMessageById(@PathVariable("message_id") Integer messageId) {
+            try {
+                Integer rowsUpdated = messageService.deleteById(messageId);
+                
+                // Check if the message was found and updated
+                if (rowsUpdated > 0) {
+                    return ResponseEntity.ok(rowsUpdated.toString());
+                } else {
+                    // If the message was not found, return an empty response body
+                    return ResponseEntity.ok("");
+                }
+            } catch (ResponseStatusException e) {
+                return ResponseEntity.status(e.getStatus()).build();
+            }
         }
-    }
+
+
+
  
      // Endpoint for updating a message text by its ID
      @PatchMapping("/messages/{message_id}")

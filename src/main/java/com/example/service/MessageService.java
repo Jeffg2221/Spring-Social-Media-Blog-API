@@ -1,9 +1,12 @@
 package com.example.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.entity.Message;
 import com.example.repository.MessageRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class MessageService {
@@ -91,9 +96,39 @@ public class MessageService {
         }
     }
 
-    public void deleteById(Integer messageId){
-        messageRepository.deleteById(messageId);
+        // Response class to represent the result of the delete operation
+    public class DeleteResponse {
+        private int rowsUpdated;
+
+        public DeleteResponse(int rowsUpdated) {
+            this.rowsUpdated = rowsUpdated;
+        }
+
+        public int getRowsUpdated() {
+            return rowsUpdated;
+        }
     }
+
+    public Integer deleteById(Integer messageId) {
+        try {
+            // Attempt to delete the message
+            messageRepository.deleteById(messageId);
+            // If successful, return 1 to indicate 1 row updated
+            return 1;
+        } catch (EmptyResultDataAccessException e) {
+            // If the message did not exist, return 0 to indicate 0 rows updated
+            return 0;
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+
 
     public List<Message> findAllMessagesByUser(Integer userId){
         if(accountService.findById(userId).isEmpty()){
