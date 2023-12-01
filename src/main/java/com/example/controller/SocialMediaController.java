@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,8 +86,10 @@ public class SocialMediaController {
      public ResponseEntity<Message> getMessageById(@PathVariable("message_id") Integer messageId) {
          return messageService.findById(messageId)
                  .map(ResponseEntity::ok)
-                 .orElse(ResponseEntity.notFound().build());
+                 .orElse(ResponseEntity.ok().build());
      }
+
+     
        // Endpoint for deleting a message by its ID
         @DeleteMapping("/messages/{message_id}")
         public ResponseEntity<String> deleteMessageById(@PathVariable("message_id") Integer messageId) {
@@ -109,18 +112,22 @@ public class SocialMediaController {
 
  
      // Endpoint for updating a message text by its ID
-     @PatchMapping("/messages/{message_id}")
-     public ResponseEntity<ResponseEntity<Integer>> updateMessageText(
-             @PathVariable("message_id") Integer messageId,
-             @RequestBody String newMessageText
-     ) {
-         try {
-             ResponseEntity<Integer> rowsUpdated = messageService.updateMessageText(messageId, newMessageText);
-             return ResponseEntity.ok(rowsUpdated);
-         } catch (ResponseStatusException e) {
-             return ResponseEntity.status(e.getStatus()).body(null);
-         }
-     }
+            @PatchMapping("/messages/{message_id}")
+        public ResponseEntity<Integer> updateMessageText(
+                @PathVariable("message_id") Integer messageId,
+                @RequestBody Map<String, String> request
+        ) {
+            String newMessageText = request.get("message_text");
+
+            try {
+                Integer rowsUpdated = messageService.updateMessageText(messageId, newMessageText);
+                return ResponseEntity.ok(rowsUpdated);
+            } catch (ResponseStatusException e) {
+                return ResponseEntity.status(e.getStatus()).body(null);
+            }
+        }
+
+     
  
 
 

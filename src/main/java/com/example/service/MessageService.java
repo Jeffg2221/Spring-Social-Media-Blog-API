@@ -53,26 +53,30 @@ public class MessageService {
         return ResponseEntity.ok(createdMessage);
     }
 
-    public ResponseEntity<Integer> updateMessageText(Integer messageId, String newMessageText) {
+    public Integer updateMessageText(Integer messageId, String newMessageText) {
         // Find the existing message by ID
         Optional<Message> optionalMessage = messageRepository.findById(messageId);
-
+    
         if (optionalMessage.isPresent()) {
             Message existingMessage = optionalMessage.get();
-
+    
             // Validate the new message text
             validateMessageText(newMessageText);
-
-            // Update the message text
+    
+            // Update the entire message
             existingMessage.setMessage_text(newMessageText);
+            // You can update other fields if needed
+    
             messageRepository.save(existingMessage);
-
+    
             // Return the number of rows updated (1)
-            return ResponseEntity.ok(1);
+            return 1;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid message ID");
         }
     }
+    
+    
 
     private void validateMessageForCreation(Message message) {
         // Check if the message_text is not blank and is under 255 characters
@@ -119,15 +123,7 @@ public class MessageService {
             // If the message did not exist, return 0 to indicate 0 rows updated
             return 0;
         }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
+    } 
 
 
     public List<Message> findAllMessagesByUser(Integer userId){
